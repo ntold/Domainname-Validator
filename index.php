@@ -1,16 +1,16 @@
 <?php
-/*************************************************************************
 
-file: whois lookup script
-modified: nico berchtold @konvert
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //
+  // Dieses Skript validiert mittels einer WHOIS Server-Liste die Verfügbarkeit einer Domain
+  //
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-*************************************************************************/
 
-$domain = $_GET['domain'];
-// For the full list of TLDs/Whois servers see http://www.iana.org/domains/root/db/ and http://www.whois365.com/en/listtld/
-$whoisservers = array(
+class domainChecker{
+  
+  static $whoisservers = array(
     "ac" => "whois.nic.ac", // Ascension Island
-    // ad - Andorra - no whois server assigned
     "ae" => "whois.nic.ae", // United Arab Emirates
     "aero"=>"whois.aero",
     "af" => "whois.nic.af", // Afghanistan
@@ -18,100 +18,63 @@ $whoisservers = array(
     "ai" => "whois.ai", // Anguilla
     "al" => "whois.ripe.net", // Albania
     "am" => "whois.amnic.net",  // Armenia
-    // an - Netherlands Antilles - no whois server assigned
-    // ao - Angola - no whois server assigned
-    // aq - Antarctica (New Zealand) - no whois server assigned
-    // ar - Argentina - no whois server assigned
     "arpa" => "whois.iana.org",
     "as" => "whois.nic.as", // American Samoa
     "asia" => "whois.nic.asia",
     "at" => "whois.nic.at", // Austria
     "au" => "whois.aunic.net", // Australia
-    // aw - Aruba - no whois server assigned
     "ax" => "whois.ax", // Aland Islands
     "az" => "whois.ripe.net", // Azerbaijan
-    // ba - Bosnia And Herzegovina - no whois server assigned
-    // bb - Barbados - no whois server assigned
-    // bd - Bangladesh - no whois server assigned
     "be" => "whois.dns.be", // Belgium
     "bg" => "whois.register.bg", // Bulgaria
     "bi" => "whois.nic.bi", // Burundi
     "biz" => "whois.biz",
     "bj" => "whois.nic.bj", // Benin
-    // bm - Bermuda - no whois server assigned
     "bn" => "whois.bn", // Brunei Darussalam
     "bo" => "whois.nic.bo", // Bolivia
     "br" => "whois.registro.br", // Brazil
     "bt" => "whois.netnames.net", // Bhutan
-    // bv - Bouvet Island (Norway) - no whois server assigned
-    // bw - Botswana - no whois server assigned
     "by" => "whois.cctld.by", // Belarus
     "bz" => "whois.belizenic.bz", // Belize
     "ca" => "whois.cira.ca", // Canada
     "cat" => "whois.cat", // Spain
     "cc" => "whois.nic.cc", // Cocos (Keeling) Islands
     "cd" => "whois.nic.cd", // Congo, The Democratic Republic Of The
-    // cf - Central African Republic - no whois server assigned
     "ch" => "whois.nic.ch", // Switzerland
     "ci" => "whois.nic.ci", // Cote d'Ivoire
     "ck" => "whois.nic.ck", // Cook Islands
     "cl" => "whois.nic.cl", // Chile
-    // cm - Cameroon - no whois server assigned
     "cn" => "whois.cnnic.net.cn", // China
     "co" => "whois.nic.co", // Colombia
     "com" => "whois.verisign-grs.com",
     "coop" => "whois.nic.coop",
-    // cr - Costa Rica - no whois server assigned
-    // cu - Cuba - no whois server assigned
-    // cv - Cape Verde - no whois server assigned
-    // cw - Curacao - no whois server assigned
     "cx" => "whois.nic.cx", // Christmas Island
-    // cy - Cyprus - no whois server assigned
     "cz" => "whois.nic.cz", // Czech Republic
     "de" => "whois.denic.de", // Germany
-    // dj - Djibouti - no whois server assigned
     "dk" => "whois.dk-hostmaster.dk", // Denmark
     "dm" => "whois.nic.dm", // Dominica
-    // do - Dominican Republic - no whois server assigned
     "dz" => "whois.nic.dz", // Algeria
     "ec" => "whois.nic.ec", // Ecuador
     "edu" => "whois.educause.edu",
     "ee" => "whois.eenet.ee", // Estonia
     "eg" => "whois.ripe.net", // Egypt
-    // er - Eritrea - no whois server assigned
     "es" => "whois.nic.es", // Spain
-    // et - Ethiopia - no whois server assigned
     "eu" => "whois.eu",
     "fi" => "whois.ficora.fi", // Finland
-    // fj - Fiji - no whois server assigned
-    // fk - Falkland Islands - no whois server assigned
-    // fm - Micronesia, Federated States Of - no whois server assigned
     "fo" => "whois.nic.fo", // Faroe Islands
     "fr" => "whois.nic.fr", // France
-    // ga - Gabon - no whois server assigned
     "gd" => "whois.nic.gd", // Grenada
-    // ge - Georgia - no whois server assigned
-    // gf - French Guiana - no whois server assigned
     "gg" => "whois.gg", // Guernsey
-    // gh - Ghana - no whois server assigned
     "gi" => "whois2.afilias-grs.net", // Gibraltar
     "gl" => "whois.nic.gl", // Greenland (Denmark)
-    // gm - Gambia - no whois server assigned
-    // gn - Guinea - no whois server assigned
     "gov" => "whois.nic.gov",
-    // gr - Greece - no whois server assigned
-    // gt - Guatemala - no whois server assigned
     "gs" => "whois.nic.gs", // South Georgia And The South Sandwich Islands
-    // gu - Guam - no whois server assigned
-    // gw - Guinea-bissau - no whois server assigned
     "gy" => "whois.registry.gy", // Guyana
     "hk" => "whois.hkirc.hk", // Hong Kong
-    // hm - Heard and McDonald Islands (Australia) - no whois server assigned
     "hn" => "whois.nic.hn", // Honduras
     "hr" => "whois.dns.hr", // Croatia
     "ht" => "whois.nic.ht", // Haiti
     "hu" => "whois.nic.hu", // Hungary
-    // id - Indonesia - no whois server assigned
     "ie" => "whois.domainregistry.ie", // Ireland
     "il" => "whois.isoc.org.il", // Israel
     "im" => "whois.nic.im", // Isle of Man
@@ -124,46 +87,29 @@ $whoisservers = array(
     "is" => "whois.isnic.is", // Iceland
     "it" => "whois.nic.it", // Italy
     "je" => "whois.je", // Jersey
-    // jm - Jamaica - no whois server assigned
-    // jo - Jordan - no whois server assigned
     "jobs" => "jobswhois.verisign-grs.com",
     "jp" => "whois.jprs.jp", // Japan
     "ke" => "whois.kenic.or.ke", // Kenya
     "kg" => "www.domain.kg", // Kyrgyzstan
-    // kh - Cambodia - no whois server assigned
     "ki" => "whois.nic.ki", // Kiribati
-    // km - Comoros - no whois server assigned
-    // kn - Saint Kitts And Nevis - no whois server assigned
-    // kp - Korea, Democratic People's Republic Of - no whois server assigned
     "kr" => "whois.kr", // Korea, Republic Of
-    // kw - Kuwait - no whois server assigned
-    // ky - Cayman Islands - no whois server assigned
     "kz" => "whois.nic.kz", // Kazakhstan
-    "la" => "whois.nic.la", // Lao People's Democratic Republic
-    // lb - Lebanon - no whois server assigned
-    // lc - Saint Lucia - no whois server assigned
+    "la" => "whois.nic.la", // Lao People's Democratic Republicd
     "li" => "whois.nic.li", // Liechtenstein
-    // lk - Sri Lanka - no whois server assigned
     "lt" => "whois.domreg.lt", // Lithuania
     "lu" => "whois.dns.lu", // Luxembourg
     "lv" => "whois.nic.lv", // Latvia
     "ly" => "whois.nic.ly", // Libya
     "ma" => "whois.iam.net.ma", // Morocco
-    // mc - Monaco - no whois server assigned
     "md" => "whois.nic.md", // Moldova
     "me" => "whois.nic.me", // Montenegro
     "mg" => "whois.nic.mg", // Madagascar
-    // mh - Marshall Islands - no whois server assigned
     "mil" => "whois.nic.mil",
-    // mk - Macedonia, The Former Yugoslav Republic Of - no whois server assigned
     "ml" => "whois.dot.ml", // Mali
-    // mm - Myanmar - no whois server assigned
     "mn" => "whois.nic.mn", // Mongolia
     "mo" => "whois.monic.mo", // Macao
     "mobi" => "whois.dotmobiregistry.net",
     "mp" => "whois.nic.mp", // Northern Mariana Islands
-    // mq - Martinique (France) - no whois server assigned
-    // mr - Mauritania - no whois server assigned
     "ms" => "whois.nic.ms", // Montserrat
     // mt - Malta - no whois server assigned
     "mu" => "whois.nic.mu", // Mauritius
@@ -275,122 +221,117 @@ $whoisservers = array(
     "company" => "whois.nic.company",
     "marketing" => "whois.nic.marketing",
     "support" => "whois.nic.support",  
-    "yu" => "whois.ripe.net");
-
-function LookupDomain($domain){
-    global $whoisservers;
+    "yu" => "whois.ripe.net"
+  );
+  
+  
+  public static function checkDomain($domain) {
+    $domain = trim($domain);
+    if(substr(strtolower($domain), 0, 7) == "http://") $domain = substr($domain, 7);
+    if(substr(strtolower($domain), 0, 8) == "https://") $domain = substr($domain, 8);   
+    if(substr(strtolower($domain), 0, 4) == "www.") $domain = substr($domain, 4);
+    if(self::ValidateDomain($domain)) {
+      $result = self::LookupDomain($domain);
+    }
+    return $result;
+  }
+  
+  public static function LookupDomain($domain){
     $domain_parts = explode(".", $domain);
     $tld = strtolower(array_pop($domain_parts));
-    $whoisserver = $whoisservers[$tld];
+    $whoisserver = self::$whoisservers[$tld];
     if(!$whoisserver) {
-        return "<span style='color:red;'>Die Endung für $domain existiert nicht!</span>";
+        return false;
     }
-    $result = QueryWhoisServer($whoisserver, $domain);
+    $result = self::QueryWhoisServer($whoisserver, $domain);
     if(!$result) {
-        return "Error: No results retrieved from $whoisserver server for $domain domain!";
+        return false;
     }
     else {
         while(strpos($result, "Whois Server:") !== FALSE){
             preg_match("/Whois Server: (.*)/", $result, $matches);
             $secondary = $matches[1];
             if($secondary) {
-                $result = QueryWhoisServer($secondary, $domain);
+                $result = self::QueryWhoisServer($secondary, $domain);
                 $whoisserver = $secondary;
             }
         }
     }
     return $result;
-}
+  }	
 
-function LookupIP($ip) {
-    $whoisservers = array(
-        "whois.lacnic.net", // Latin America and Caribbean - returns data for ALL locations worldwide
-        "whois.apnic.net", // Asia/Pacific only
-        "whois.arin.net", // North America only
-        "whois.ripe.net" // Europe, Middle East and Central Asia only
-    );
-    $results = array();
-    foreach($whoisservers as $whoisserver) {
-        $result = QueryWhoisServer($whoisserver, $ip);
-        if($result && !in_array($result, $results)) {
-            $results[$whoisserver]= $result;
-        }
-    }
-    $res = "RESULTS FOUND: " . count($results);
-    foreach($results as $whoisserver=>$result) {
-        $res .= "\n\n-------------\nLookup results for " . $ip . " from " . $whoisserver . " server:\n\n" . $result;
-    }
-    return $res;
-}
 
-function ValidateIP($ip) {
-    $ipnums = explode(".", $ip);
-    if(count($ipnums) != 4) {
-        return false;
-    }
-    foreach($ipnums as $ipnum) {
-        if(!is_numeric($ipnum) || ($ipnum > 255)) {
-            return false;
-        }
-    }
-    return $ip;
-}
+  // Validator Funktion  
+  public static function ValidateDomain($domain) {
+      if(!preg_match("/^([-a-z0-9]{2,100})\.([a-z\.]{2,10})$/i", $domain)) {
+          return false;
+      }
+      return $domain;
+  }
 
-function ValidateDomain($domain) {
-    if(!preg_match("/^([-a-z0-9]{2,100})\.([a-z\.]{2,10})$/i", $domain)) {
-        return false;
-    }
-    return $domain;
-}
+  public static function QueryWhoisServer($whoisserver, $domain) {
+      $port = 43;
+      $timeout = 10;
+      $fp = fsockopen($whoisserver, $port, $errno, $errstr, $timeout) or die("Socket Error " . $errno . " - " . $errstr);
+      fputs($fp, $domain . "\r\n");
+      $out = "";
+      while(!feof($fp)){
+          $out .= fgets($fp);
+      }
+      fclose($fp);
+      $res = "";
+      if((strpos(strtolower($out), "error") === FALSE) && (strpos(strtolower($out), "not allocated") === FALSE)) {
+          $rows = explode("\n", $out);
+          foreach($rows as $row) {
+              $row = trim($row);
+              if(($row != '') && ($row{0} != '#') && ($row{0} != '%')) {
+                  $res .= $row."\n";
+              }
+          }
+      }
+      if(preg_match("/(free|matching|domain not found)/i", $res)){
+          $res = true;
+      } else{
+        $res = false;
+      }
+      return $res;
+  }
+  
+  
+  
+  // Domain über IP Abrufen - nicht in aktivem Gebrauch
+  public static function LookupIP($ip) {
+      $whoisservers = array(
+          "whois.lacnic.net", // Latin America and Caribbean - returns data for ALL locations worldwide
+          "whois.apnic.net", // Asia/Pacific only
+          "whois.arin.net", // North America only
+          "whois.ripe.net" // Europe, Middle East and Central Asia only
+      );
+      $results = array();
+      foreach($whoisservers as $whoisserver) {
+          $result = QueryWhoisServer($whoisserver, $ip);
+          if($result && !in_array($result, $results)) {
+              $results[$whoisserver]= $result;
+          }
+      }
+      $res = "RESULTS FOUND: " . count($results);
+      foreach($results as $whoisserver=>$result) {
+          $res .= "\n\n-------------\nLookup results for " . $ip . " from " . $whoisserver . " server:\n\n" . $result;
+      }
+      return $res;
+  }
 
-function QueryWhoisServer($whoisserver, $domain) {
-    $port = 43;
-    $timeout = 10;
-    $fp = @fsockopen($whoisserver, $port, $errno, $errstr, $timeout) or die("Socket Error " . $errno . " - " . $errstr);
-    fputs($fp, $domain . "\r\n");
-    $out = "";
-    while(!feof($fp)){
-        $out .= fgets($fp);
-    }
-    fclose($fp);
-    $res = "";
-    if((strpos(strtolower($out), "error") === FALSE) && (strpos(strtolower($out), "not allocated") === FALSE)) {
-        $rows = explode("\n", $out);
-        foreach($rows as $row) {
-            $row = trim($row);
-            if(($row != '') && ($row{0} != '#') && ($row{0} != '%')) {
-                $res .= $row."\n";
-            }
-        }
-    }
-    return $res;
+  public static function ValidateIP($ip) {
+      $ipnums = explode(".", $ip);
+      if(count($ipnums) != 4) {
+          return false;
+      }
+      foreach($ipnums as $ipnum) {
+          if(!is_numeric($ipnum) || ($ipnum > 255)) {
+              return false;
+          }
+      }
+      return $ip;
+  }
+  
 }
-?>
-
-<html>
-<head>
-<title>Whois Lookup Script</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-</head>
-
-<body>
-<form action="<?=$_SERVER['PHP_SELF'];?>">
-<p><b><label for="domain">Domain/IP Address:</label></b> <input type="text" name="domain" id="domain" value="<?=$domain;?>"> <input type="submit" value="Lookup"></p>
-</form>
-<?php
-if($domain) {
-    $domain = trim($domain);
-    if(substr(strtolower($domain), 0, 7) == "http://") $domain = substr($domain, 7);
-    if(substr(strtolower($domain), 0, 4) == "www.") $domain = substr($domain, 4);
-    if(ValidateIP($domain)) {
-        $result = LookupIP($domain);
-    }
-    elseif(ValidateDomain($domain)) {
-        $result = LookupDomain($domain);
-    }
-    else die("Geben Sie bitte die vollständige Domain ein! z.B. webstyle.ch");
-    echo "<pre>\n" . $result . "\n</pre>\n";
-}
-?>
-</body>
-</html>
